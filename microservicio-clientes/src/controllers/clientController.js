@@ -1,55 +1,53 @@
 const Client = require('../models/client');
+const { types } = require('cassandra-driver');
 
-// Obtener todos los clientes
 exports.getClients = async (req, res) => {
   try {
-    const clients = await Client.find();
-    res.json(clients);
+    const result = await Client.findAll(req.app.locals.cassandraClient);
+    res.json(result.rows);
   } catch (error) {
+    console.error('Error en getClients:', error);
     res.status(500).json({ message: error.message });
   }
 };
 
-// Obtener un cliente por ID
 exports.getClientById = async (req, res) => {
   try {
-    const client = await Client.findById(req.params.id);
-    if (!client) return res.status(404).json({ message: 'Cliente no encontrado' });
-    res.json(client);
+    const result = await Client.findById(req.app.locals.cassandraClient, types.Uuid.fromString(req.params.id));
+    if (result.rows.length === 0) return res.status(404).json({ message: 'Cliente no encontrado' });
+    res.json(result.rows[0]);
   } catch (error) {
+    console.error('Error en getClientById:', error);
     res.status(500).json({ message: error.message });
   }
 };
 
-// Crear un nuevo cliente
 exports.createClient = async (req, res) => {
-  const client = new Client(req.body);
   try {
-    const newClient = await client.save();
-    res.status(201).json(newClient);
+    await Client.create(req.app.locals.cassandraClient, req.body);
+    res.status(201).json({ message: 'Cliente creado exitosamente' });
   } catch (error) {
+    console.error('Error en createClient:', error);
     res.status(400).json({ message: error.message });
   }
 };
 
-// Actualizar un cliente
 exports.updateClient = async (req, res) => {
   try {
-    const updatedClient = await Client.findByIdAndUpdate(req.params.id, req.body, { new: true });
-    if (!updatedClient) return res.status(404).json({ message: 'Cliente no encontrado' });
-    res.json(updatedClient);
+    await Client.update(req.app.locals.cassandraClient, types.Uuid.fromString(req.params.id), req.body);
+    res.json({ message: 'Cliente actualizado exitosamente' });
   } catch (error) {
+    console.error('Error en updateClient:', error);
     res.status(400).json({ message: error.message });
   }
 };
 
-// Eliminar un cliente
 exports.deleteClient = async (req, res) => {
   try {
-    const deletedClient = await Client.findByIdAndDelete(req.params.id);
-    if (!deletedClient) return res.status(404).json({ message: 'Cliente no encontrado' });
-    res.json({ message: 'Cliente eliminado' });
+    await Client.delete(req.app.locals.cassandraClient, types.Uuid.fromString(req.params.id));
+    res.json({ message: 'Cliente eliminado exitosamente' });
   } catch (error) {
+    console.error('Error en deleteClient:', error);
     res.status(500).json({ message: error.message });
   }
 };
