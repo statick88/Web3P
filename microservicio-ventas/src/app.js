@@ -14,7 +14,7 @@ app.use(cors());
 app.use(express.json());
 
 // Rutas
-app.use('/api/ventas', ventaRoutes);
+app.use('/api/sales', ventaRoutes);
 
 // Puerto
 const PORT = process.env.PORT || 5002;

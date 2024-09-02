@@ -1,20 +1,19 @@
-# Usa una imagen base de Node.js
-FROM node:14
+FROM node:18
 
-# Establece el directorio de trabajo en el contenedor
 WORKDIR /usr/src/app
 
-# Copia los archivos package.json y package-lock.json
 COPY package*.json ./
 
-# Instala las dependencias del proyecto
-RUN npm install
+RUN npm ci --only=production
 
-# Copia el resto de los archivos del proyecto
 COPY . .
 
-# Expone el puerto en el que se ejecutará la aplicación
+RUN groupadd -r nodejs && useradd -r -g nodejs nodejs
+USER nodejs
+
 EXPOSE 5000
 
-# Comando para ejecutar la aplicación
+HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
+    CMD node healthcheck.js
+
 CMD ["node", "src/app.js"]

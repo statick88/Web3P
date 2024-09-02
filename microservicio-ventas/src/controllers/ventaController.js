@@ -1,14 +1,17 @@
 const Venta = require('../models/venta');
 const DetalleVenta = require('../models/detalleVenta');
 
-
 exports.crearVenta = async (req, res) => {
     const { clientId, date, detalles } = req.body; 
     try {
+        // Calcular el total de la venta
+        const totalVenta = detalles.reduce((total, detalle) => total + (detalle.quantity * detalle.price), 0);
+
         // Crear la venta
         const nuevaVenta = new Venta({
             clientId,
-            date
+            date,
+            totalVenta  // Agregar el total calculado
         });
         const ventaGuardada = await nuevaVenta.save();
 
@@ -25,7 +28,7 @@ exports.crearVenta = async (req, res) => {
         res.status(201).json({ mensaje: 'Venta creada exitosamente', venta: ventaGuardada });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ mensaje: 'Error al crear la venta', error });
+        res.status(500).json({ mensaje: 'Error al crear la venta', error: error.message });
     }
 };
 

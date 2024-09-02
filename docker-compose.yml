@@ -27,6 +27,8 @@ services:
     environment:
       - CASSANDRA_HOST=bdclientes
       - CASSANDRA_PORT=9042
+      - CASSANDRA_DC=datacenter1
+      - CASSANDRA_KEYSPACE=bdclientes
       - PORT=5001
     ports:
       - "5001:5001"
@@ -39,7 +41,7 @@ services:
     build: ./microservicio-productos
     container_name: microservicio-productos
     environment:
-      - MONGODB_URI=mongodb://mongo-productos:27017/productosdb
+      - MONGO_URI=mongodb://mongo-productos:27017/microservicio-productos
       - PORT=5000
     ports:
       - "5000:5000"
@@ -52,7 +54,7 @@ services:
     build: ./microservicio-ventas
     container_name: microservicio-ventas
     environment:
-      - MONGODB_URI=mongodb://mongo-ventas:27017/ventasdb
+      - MONGO_URI=mongodb://mongo-ventas:27017/microservicio-ventas
       - PORT=5002
     ports:
       - "5002:5002"
@@ -67,6 +69,8 @@ services:
     environment:
       - MAX_HEAP_SIZE=512M
       - HEAP_NEWSIZE=100M
+      - CASSANDRA_HOST=bdclientes
+      - CASSANDRA_PORT=9042
     ports:
       - "7000:7000"
       - "9042:9042"
@@ -82,6 +86,8 @@ services:
       - mongo-productos-data:/data/db
     networks:
       - microservices-network
+    ports:
+      - "27017:27017"
 
   mongo-ventas:
     image: mongo:4.4
@@ -90,6 +96,8 @@ services:
       - mongo-ventas-data:/data/db
     networks:
       - microservices-network
+    ports:
+      - "27018:27017"
 
 volumes:
   cassandra-data:
