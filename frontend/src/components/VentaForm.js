@@ -109,7 +109,6 @@ const VentaForm = () => {
                     value={venta.clientId}
                     onChange={handleChange}
                     className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    required
                 >
                     <option value="">Seleccionar Cliente</option>
                     {clients.map(client => (
@@ -125,7 +124,6 @@ const VentaForm = () => {
                     value={venta.date.substring(0, 10)} // Asume que la fecha está en formato ISO
                     onChange={handleChange}
                     className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    required
                 />
 
                 <div className="mb-4">
@@ -137,7 +135,6 @@ const VentaForm = () => {
                                 value={newDetail.productId}
                                 onChange={handleProductChange}
                                 className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                required
                             >
                                 <option value="">Seleccionar Producto</option>
                                 {products.map(product => (
@@ -153,7 +150,6 @@ const VentaForm = () => {
                                 onChange={handleDetailChange}
                                 placeholder="Cantidad"
                                 className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                required
                             />
                             <input
                                 type="number"

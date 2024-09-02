@@ -14,6 +14,22 @@ services:
           - POST
           - PUT
           - DELETE
+    plugins:
+      - name: cors
+        config:
+          origins: '*'
+          methods:
+            - GET
+            - POST
+            - PUT
+            - DELETE
+          headers:
+            - Authorization
+            - Content-Type
+          exposed_headers:
+            - Content-Length
+          credentials: true
+          max_age: 3600
 
   - name: productos
     url: http://microservicio-productos:5000
@@ -27,6 +43,22 @@ services:
           - POST
           - PUT
           - DELETE
+    plugins:
+      - name: cors
+        config:
+          origins: '*'
+          methods:
+            - GET
+            - POST
+            - PUT
+            - DELETE
+          headers:
+            - Authorization
+            - Content-Type
+          exposed_headers:
+            - Content-Length
+          credentials: true
+          max_age: 3600
 
   - name: ventas
     url: http://microservicio-ventas:5002
@@ -40,3 +72,19 @@ services:
           - POST
           - PUT
           - DELETE
+    plugins:
+      - name: cors
+        config:
+          origins: '*'
+          methods:
+            - GET
+            - POST
+            - PUT
+            - DELETE
+          headers:
+            - Authorization
+            - Content-Type
+          exposed_headers:
+            - Content-Length
+          credentials: true
+          max_age: 3600

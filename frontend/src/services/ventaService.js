@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:8000/grupo03/ventas/api/sales';
+const API_URL = 'http://localhost:5002/api/sales';
 
 export const getVentas = () => {
     return axios.get(API_URL);
@@ -19,8 +19,13 @@ export const updateVenta = (id, venta) => {
     return axios.put(`${API_URL}/${id}`, venta);
 };
 
-export const deleteVenta = (id) => {
-    return axios.delete(`${API_URL}/${id}`);
+export const deleteVenta = async (id) => {
+    try {
+        const result = await axios.delete(`${API_URL}/${id}`);
+        return result;
+    } catch (error) {
+        console.error('Error deleting venta:', error);
+    }
 };
 
 export const getVentasByCliente = (clienteId) => {

@@ -1,9 +1,14 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:8000/grupo03/clientes/api/clients';
+const API_URL = 'http://localhost:5001/api/clients';
 
 export const getClients = () => {
-    return axios.get(API_URL);
+    try {
+        const result = axios.get(API_URL);
+        return result;
+    } catch (error) {
+        console.error('Error getting clients:', error);
+    }
 };
 
 export const getClientById = (id) => {
@@ -18,6 +23,11 @@ export const updateClient = (id, client) => {
     return axios.put(`${API_URL}/${id}`, client);
 };
 
-export const deleteClient = (id) => {
-    return axios.delete(`${API_URL}/${id}`);
+export const deleteClient = async (id) => {
+    try {
+        const result = await axios.delete(`${API_URL}/${id}`);
+        return result;
+    } catch (error) {
+        console.error('Error deleting client:', error);
+    }
 };

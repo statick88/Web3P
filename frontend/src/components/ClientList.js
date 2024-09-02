@@ -55,13 +55,13 @@ const ClientList = () => {
                             <td className="py-2 px-4 border-b">{client.address || 'N/A'}</td>
                             <td className="py-2 px-4 border-b">
                                 <button
-                                    onClick={() => navigate(`/edit-client/${client._id}`)}
+                                    onClick={() => navigate(`/edit-client/${client.id}`)}
                                     className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 mr-2"
                                 >
                                     Editar
                                 </button>
                                 <button
-                                    onClick={() => handleDelete(client._id)}
+                                    onClick={() => handleDelete(client.id)}
                                     className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
                                 >
                                     Eliminar
