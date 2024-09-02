@@ -1,57 +1,101 @@
 version: '3.8'
+
 services:
-  # MongoDB
-  mongodb:
-    image: mongo:latest
-    container_name: mongodb
-    ports:
-      - '27017:27017'
-    networks:
-      - tienda-network
+  kong:
+    image: kong:latest
+    environment:
+      KONG_DATABASE: "off"
+      KONG_DECLARATIVE_CONFIG: /kong/declarative/kong.yml
+      KONG_PROXY_ACCESS_LOG: /dev/stdout
+      KONG_ADMIN_ACCESS_LOG: /dev/stdout
+      KONG_PROXY_ERROR_LOG: /dev/stderr
+      KONG_ADMIN_ERROR_LOG: /dev/stderr
+      KONG_ADMIN_LISTEN: 0.0.0.0:8001
     volumes:
-      - mongo-data:/data/db
-
-  # Microservicio de productos
-  productos:
-    build:
-      context: ./microservicio-productos
-    container_name: microservicio-productos
+      - ./kong.yml:/kong/declarative/kong.yml
     ports:
-      - '5000:5000'
+      - "8000:8000"
+      - "8443:8443"
+      - "8001:8001"
+      - "8444:8444"
     networks:
-      - tienda-network
-    environment:
-      - MONGO_URI=mongodb://mongodb:27017/microservicio-productos
+      - microservices-network
 
-  # Microservicio de clientes
-  clientes:
-    build:
-      context: ./microservicio-clientes
+  microservicio-clientes:
+    build: ./microservicio-clientes
     container_name: microservicio-clientes
-    ports:
-      - '5001:5001'
-    networks:
-      - tienda-network
     environment:
-      - MONGO_URI=mongodb://mongodb:27017/microservicio-clientes
+      - CASSANDRA_HOST=bdclientes
+      - CASSANDRA_PORT=9042
+      - PORT=5001
+    ports:
+      - "5001:5001"
+    depends_on:
+      - bdclientes
+    networks:
+      - microservices-network
 
-  # Microservicio de ventas
-  ventas:
-    build:
-      context: ./microservicio-ventas
+  microservicio-productos:
+    build: ./microservicio-productos
+    container_name: microservicio-productos
+    environment:
+      - MONGODB_URI=mongodb://mongo-productos:27017/productosdb
+      - PORT=5000
+    ports:
+      - "5000:5000"
+    depends_on:
+      - mongo-productos
+    networks:
+      - microservices-network
+
+  microservicio-ventas:
+    build: ./microservicio-ventas
     container_name: microservicio-ventas
-    ports:
-      - '5002:5002'
-    networks:
-      - tienda-network
     environment:
-      - MONGO_URI=mongodb://mongodb:27017/microservicio-ventas
+      - MONGODB_URI=mongodb://mongo-ventas:27017/ventasdb
+      - PORT=5002
+    ports:
+      - "5002:5002"
+    depends_on:
+      - mongo-ventas
+    networks:
+      - microservices-network
 
+  bdclientes:
+    image: cassandra:latest
+    container_name: bdclientes
+    environment:
+      - MAX_HEAP_SIZE=512M
+      - HEAP_NEWSIZE=100M
+    ports:
+      - "7000:7000"
+      - "9042:9042"
+    volumes:
+      - cassandra-data:/var/lib/cassandra
+    networks:
+      - microservices-network
 
-networks:
-  tienda-network:
-    driver: bridge
+  mongo-productos:
+    image: mongo:4.4
+    container_name: mongo-productos
+    volumes:
+      - mongo-productos-data:/data/db
+    networks:
+      - microservices-network
+
+  mongo-ventas:
+    image: mongo:4.4
+    container_name: mongo-ventas
+    volumes:
+      - mongo-ventas-data:/data/db
+    networks:
+      - microservices-network
 
 volumes:
-  mongo-data:
-    driver: local
+  cassandra-data:
+  mongo-productos-data:
+  mongo-ventas-data:
+
+networks:
+  microservices-network:
+    driver: bridge

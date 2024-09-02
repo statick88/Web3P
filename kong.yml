@@ -1,0 +1,42 @@
+_format_version: "2.1"
+_transform: true
+
+services:
+  - name: clientes
+    url: http://microservicio-clientes:5001
+    routes:
+      - name: clientes-route
+        paths:
+          - /grupo03/clientes
+        strip_path: true
+        methods:
+          - GET
+          - POST
+          - PUT
+          - DELETE
+
+  - name: productos
+    url: http://microservicio-productos:5000
+    routes:
+      - name: productos-route
+        paths:
+          - /grupo03/productos
+        strip_path: true
+        methods:
+          - GET
+          - POST
+          - PUT
+          - DELETE
+
+  - name: ventas
+    url: http://microservicio-ventas:5002
+    routes:
+      - name: ventas-route
+        paths:
+          - /grupo03/ventas
+        strip_path: true
+        methods:
+          - GET
+          - POST
+          - PUT
+          - DELETE
